@@ -1,154 +1,80 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(){
-    int size = 15;
-    int arr[16];
-    int i, key, index;
+// Node structure
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
 
-    // ── INITIALIZE ────────────────────────────────
-    for(i = 0; i <= size; i++){
-        arr[i] = 0;        // 0 means empty
-    }
+// Create new node
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
 
-    // ── INSERT FUNCTION ───────────────────────────
-    // BST rule:
-    // smaller → go left  (2*i)
-    // larger  → go right (2*i+1)
+// Insert into BST
+struct Node* insert(struct Node* root, int value) {
+    if (root == NULL)
+        return createNode(value);
 
-    // inserting root
-    arr[1] = 50;
+    if (value < root->data)
+        root->left = insert(root->left, value);
+    else if (value > root->data)
+        root->right = insert(root->right, value);
 
-    // insert 30
-    index = 1;
-    while(arr[index] != 0){
-        if(30 < arr[index])
-            index = 2 * index;       // go left
-        else
-            index = 2 * index + 1;   // go right
-    }
-    arr[index] = 30;
+    return root;
+}
 
-    // insert 70
-    index = 1;
-    while(arr[index] != 0){
-        if(70 < arr[index])
-            index = 2 * index;
-        else
-            index = 2 * index + 1;
-    }
-    arr[index] = 70;
+// Inorder traversal (sorted output)
+void inorder(struct Node* root) {
+    if (root == NULL) return;
 
-    // insert 20
-    index = 1;
-    while(arr[index] != 0){
-        if(20 < arr[index])
-            index = 2 * index;
-        else
-            index = 2 * index + 1;
-    }
-    arr[index] = 20;
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
+}
 
-    // insert 40
-    index = 1;
-    while(arr[index] != 0){
-        if(40 < arr[index])
-            index = 2 * index;
-        else
-            index = 2 * index + 1;
-    }
-    arr[index] = 40;
+// Preorder traversal
+void preorder(struct Node* root) {
+    if (root == NULL) return;
 
-    // insert 60
-    index = 1;
-    while(arr[index] != 0){
-        if(60 < arr[index])
-            index = 2 * index;
-        else
-            index = 2 * index + 1;
-    }
-    arr[index] = 60;
+    printf("%d ", root->data);
+    preorder(root->left);
+    preorder(root->right);
+}
 
-    // insert 80
-    index = 1;
-    while(arr[index] != 0){
-        if(80 < arr[index])
-            index = 2 * index;
-        else
-            index = 2 * index + 1;
-    }
-    arr[index] = 80;
+// Postorder traversal
+void postorder(struct Node* root) {
+    if (root == NULL) return;
 
-    // ── DISPLAY ARRAY ─────────────────────────────
-    printf("Array representation:\n");
-    for(i = 1; i <= size; i++){
-        if(arr[i] != 0)
-            printf("index[%d] = %d\n", i, arr[i]);
-    }
+    postorder(root->left);
+    postorder(root->right);
+    printf("%d ", root->data);
+}
 
-    // ── TREE STRUCTURE ────────────────────────────
-    printf("\nTree structure:\n");
-    printf("           %d\n",         arr[1]);
-    printf("          /  \\\n");
-    printf("        %d     %d\n",     arr[2], arr[3]);
-    printf("       / \\   / \\\n");
-    printf("     %d   %d %d   %d\n",  arr[4], arr[5], arr[6], arr[7]);
+int main() {
+    struct Node* root = NULL;
 
-    // ── INORDER TRAVERSAL ─────────────────────────
-    // inorder of BST always gives sorted output
-    printf("\nInorder (Left->Root->Right):\n");
-    printf("%d ", arr[4]);   // left  of 30
-    printf("%d ", arr[2]);   // 30
-    printf("%d ", arr[5]);   // right of 30
-    printf("%d ", arr[1]);   // root  50
-    printf("%d ", arr[6]);   // left  of 70
-    printf("%d ", arr[3]);   // 70
-    printf("%d ", arr[7]);   // right of 70
-    printf("\n");
+    // Insert elements
+    root = insert(root, 10);
+    insert(root, 5);
+    insert(root, 15);
+    insert(root, 3);
+    insert(root, 7);
 
-    // ── PREORDER TRAVERSAL ────────────────────────
-    printf("\nPreorder (Root->Left->Right):\n");
-    printf("%d ", arr[1]);   // root  50
-    printf("%d ", arr[2]);   // 30
-    printf("%d ", arr[4]);   // left  of 30
-    printf("%d ", arr[5]);   // right of 30
-    printf("%d ", arr[3]);   // 70
-    printf("%d ", arr[6]);   // left  of 70
-    printf("%d ", arr[7]);   // right of 70
-    printf("\n");
+    printf("Inorder (Sorted): ");
+    inorder(root);
 
-    // ── POSTORDER TRAVERSAL ───────────────────────
-    printf("\nPostorder (Left->Right->Root):\n");
-    printf("%d ", arr[4]);   // left  of 30
-    printf("%d ", arr[5]);   // right of 30
-    printf("%d ", arr[2]);   // 30
-    printf("%d ", arr[6]);   // left  of 70
-    printf("%d ", arr[7]);   // right of 70
-    printf("%d ", arr[3]);   // 70
-    printf("%d ", arr[1]);   // root  50
-    printf("\n");
+    printf("\nPreorder: ");
+    preorder(root);
 
-    // ── SEARCH ────────────────────────────────────
-    key   = 40;
-    index = 1;
-    printf("\nSearching for %d:\n", key);
-    while(arr[index] != 0 && index <= size){
-        if(arr[index] == key){
-            printf("Found %d at index %d\n", key, index);
-            break;
-        }
-        else if(key < arr[index]){
-            printf("%d < %d go left\n", key, arr[index]);
-            index = 2 * index;       // go left
-        }
-        else{
-            printf("%d > %d go right\n", key, arr[index]);
-            index = 2 * index + 1;   // go right
-        }
-    }
-    if(arr[index] == 0 || index > size){
-        printf("%d not found!\n", key);
-    }
+    printf("\nPostorder: ");
+    postorder(root);
 
     return 0;
 }
